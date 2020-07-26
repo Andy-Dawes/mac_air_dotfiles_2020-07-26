@@ -1,0 +1,114 @@
+
+" =====================================================
+" MY LEARN VIMSCRIPT THE HARD WAY
+" =====================================================
+"
+" --------------------------------------
+" Base configuration
+" --------------------------------------
+"
+" activates filetype detection
+filetype plugin indent on
+
+set nocompatible
+
+" activates syntax highlighting among other things
+syntax on
+
+" allows you to deal with multiple unsaved
+" buffers simultaneously without resorting
+" to misusing tabs
+set hidden
+
+" just hit backspace without this one and
+" see for yourself
+set backspace=indent,eol,start
+
+" Set colorscheme
+colorscheme papercolor
+
+" --------------------------------------
+" My LVTHW configuration
+" --------------------------------------  
+
+" Have a message open
+echom "And the moral of the story; appreciate what you've got, because basically, I'm fantastic!" 
+
+" Set number and relative number
+set nu
+set rnu
+
+" Have the line wrap at the end of the screen width
+set wrap
+
+" map the '-' to delete a line and paste it below the one I'm on
+nnoremap <leader>_ dd<esc>p
+
+" map the '^' to delete a line and paste it above the one I'm on
+nnoremap <leader>- dd<esc>2kp
+
+" map <c-u> to U in insert mode
+inoremap <c-u> <esc>vawUi
+
+" map <c-u> to U in insert mode
+nnoremap <c-u> vawU
+
+" map leader and localleader key binds
+let mapleader= " "
+let maplocalleader= ",,"
+
+" Edit my lvthw_vimrc file
+nnoremap <leader>eV :e ~/.lvthw_vimrc<CR>
+nnoremap <leader>ev :source ~/.lvthw_vimrc<CR>
+
+" Abbreviations
+iabbrev adn and
+iabbrev waht what
+iabbrev tehn then
+iabbrev @@ <CR>Andy Dawes<CR>andy.dawes@live.co.uk
+iabbrev ccopy Copyright 2020 Andy Dawes, all rights reserved
+iabbrev sig <CR>Andy Dawes<CR>======================<CR>andy.dawes@live.co.uk<CR>
+
+" Better exit Insert Mode
+inoremap <esc> <nop>
+inoremap jk <esc>
+
+" No arrow keys
+inoremap <Left> <nop>
+inoremap <Right> <nop>
+inoremap <Up> <nop>
+inoremap <Down> <nop>
+
+nnoremap <Left> <nop>
+nnoremap <Right> <nop>
+nnoremap <Up> <nop>
+nnoremap <Down> <nop>
+
+vnoremap <Left> <nop>
+vnoremap <Right> <nop>
+vnoremap <Up> <nop>
+vnoremap <Down> <nop>
+
+" Buffer local addreviations
+iabbrev <buffer> --- &mdash
+
+" Autocommands for specific filetypes
+" Combining autocommands and abbreviations
+augroup filetype_python
+	autocmd!
+	autocmd FileType python nnoremap <buffer> <localleader>c I//<esc>
+	autocmd FileType python     :iabbrev <buffer> iff if:<left>
+augroup END
+
+augroup filetype_html
+	autocmd!
+	autocmd FileType html nnoremap <buffer> <localleader>f Vatzf
+augroup END
+
+augroup filetype_javascript
+	autocmd!
+	autocmd FileType javascript nnoremap <buffer> <localleader>c I//<esc>
+	autocmd FileType javascript :iabbrev <buffer> iff if ()<left>
+augroup END
+
+

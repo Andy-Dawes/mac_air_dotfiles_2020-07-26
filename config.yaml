@@ -1,0 +1,92 @@
+config:
+  backup: true
+  create: true
+  dotpath: dotfiles
+dotfiles:
+  f_bashrc:
+    src: bashrc
+    dst: ~/.bashrc
+  f_gitconfig:
+    src: gitconfig
+    dst: ~/.gitconfig
+  f_lvthw_vimrc:
+    src: lvthw_vimrc
+    dst: ~/.lvthw_vimrc
+  f_profile:
+    src: profile
+    dst: ~/.profile
+  f_taskrc:
+    src: taskrc
+    dst: ~/.taskrc
+  f_tmux.conf:
+    src: tmux.conf
+    dst: ~/.tmux.conf
+  f_vimrc:
+    src: vimrc
+    dst: ~/.vimrc
+  f_muttrc:
+    src: config/mutt/muttrc
+    dst: ~/.config/mutt/muttrc
+  f_mailcap:
+    src: config/mutt/mailcap
+    dst: ~/.config/mutt/mailcap
+  f_commands.py:
+    src: config/ranger/commands.py
+    dst: ~/.config/ranger/commands.py
+  f_rc.conf:
+    src: config/ranger/rc.conf
+    dst: ~/.config/ranger/rc.conf
+  f_rifle.conf:
+    src: config/ranger/rifle.conf
+    dst: ~/.config/ranger/rifle.conf
+  f_scope.sh:
+    src: config/ranger/scope.sh
+    dst: ~/.config/ranger/scope.sh
+  f_shortcuts.conf:
+    src: config/ranger/shortcuts.conf
+    dst: ~/.config/ranger/shortcuts.conf
+  f_tuir.cfg:
+    src: config/tuir/tuir.cfg
+    dst: ~/.config/tuir/tuir.cfg
+  f_tuir_mailcap:
+    src: config/tuir/mailcap
+    dst: ~/.config/tuir/mailcap
+  f_config:
+    src: newsboat/config
+    dst: ~/.newsboat/config
+  f_urls:
+    src: newsboat/urls
+    dst: ~/.newsboat/urls
+  f_config.ini:
+    src: taskell/config.ini
+    dst: ~/.taskell/config.ini
+  f_theme.ini:
+    src: taskell/theme.ini
+    dst: ~/.taskell/theme.ini
+  f_muxa.sh:
+    src: tmux/muxa.sh
+    dst: ~/.tmux/muxa.sh
+profiles:
+  deepthought-air.local:
+    dotfiles:
+    - f_bashrc
+    - f_gitconfig
+    - f_lvthw_vimrc
+    - f_profile
+    - f_taskrc
+    - f_tmux.conf
+    - f_vimrc
+    - f_muttrc
+    - f_mailcap
+    - f_commands.py
+    - f_rc.conf
+    - f_rifle.conf
+    - f_scope.sh
+    - f_shortcuts.conf
+    - f_tuir.cfg
+    - f_tuir_mailcap
+    - f_config
+    - f_urls
+    - f_config.ini
+    - f_theme.ini
+    - f_muxa.sh

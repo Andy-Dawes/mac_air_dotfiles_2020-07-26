@@ -1,0 +1,470 @@
+" =====================================================================
+" AWKWARD SQUAD VIMRC
+" =====================================================================
+
+" --> PLUGINS ------------------------------------------------------------------- {{{1
+
+" Install Vim-Plug if its not already installed
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.github.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $VIMRC
+endif
+
+" Call VimPlug
+call plug#begin('~/.vim/plugged')
+
+" Add my plugins here
+Plug 'tpope/vim-commentary'                   " add and remove comments
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-vinegar'
+Plug 'bronson/vim-trailing-whitespace'        " remove whitespace
+Plug 'mattn/emmet-vim'                        " shorthand and expansion for web dev
+Plug 'Yggdroot/indentLine'                    " add indent line (useful for web dev)
+Plug 'majutsushi/tagbar'                      " file outliner
+Plug 'tpope/vim-fugitive'                     " interact with Git from Vim
+Plug 'hail2u/vim-css3-syntax'                 " improved css syntax
+Plug 'ap/vim-css-color'
+Plug 'jelera/vim-javascript-syntax'           " improved Js syntax
+Plug 'vim-scripts/grep.vim'                   " integrates grep and other search software (ag, ripgrep, ack etc)
+Plug 'terryma/vim-multiple-cursors'
+Plug 'calviken/vim-gdscript3'
+Plug 'sheerun/vim-polyglot'
+Plug 'kien/ctrlp.vim'
+Plug 'junegunn/goyo.vim'
+Plug 'simnalamburt/vim-mundo'
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }
+Plug 'roxma/vim-window-resize-easy'
+Plug 'jceb/vim-orgmode'
+Plug 'wincent/scalpel'
+Plug 'roxma/vim-paste-easy'
+Plug 'anekos/hledger-vim'
+
+call plug#end()
+
+" --> GENERAL ------------------------------------------------------------- {{{1
+" --> Encoding ---------------------------------- {{{2
+
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8
+set bomb
+set binary
+set ttyfast
+
+" --> Spaces & Tabs ----------------------------- {{{2
+
+set tabstop=2 		            " 2 space tab
+set expandtab 		            " Use spaces for tabs
+set softtabstop=2	            " 2 space tab
+set shiftwidth=4
+filetype indent on
+filetype plugin on
+set autoindent
+
+" --> Searching --------------------------------- {{{2
+
+set path+=**                  " recursive fuzzy finding. Has tab completion
+set incsearch                 " search as characters are entered
+set hlsearch                  " highlight all matches
+
+" --> Text Line Shortcuts ----------------------- {{{2
+
+nnoremap j gj
+nnoremap k gk
+nnoremap gV '[v']
+
+" --> Folding ----------------------------------- {{{2
+
+autocmd FileType vim,txt setlocal foldmethod=marker
+
+
+" --> Misc -------------------------------------- {{{2
+
+inoremap jk <Esc>
+nnoremap 0 ^
+set nocompatible
+set nobackup                      " Dont create backup files
+set noswapfile                    " Don't use swapfile
+set backspace=indent,eol,start    " Fix backspace indent
+set autowrite                     " Automatically save before :next, :make etc
+set autoread                      " Automatically reread changed files without asking me anything
+set hidden                        " Keep buffers open without showing them on screen
+set history=500                   " Keeps 500 items in your history
+set lbr                           " Don't wrap line in the middle of a word
+set backspace=2                   " Backspace behaves like oter programs
+set nowritebackup
+set ruler                         " Show the cursor position all the time
+set laststatus=2                  " Always show the statusline
+set modelines=0                   " Disable modelines as a security precaution
+set nomodeline
+" Highlight matching pairs of brackets. Use the '%' character to jump between them.
+set matchpairs+=<:>
+
+" Set up persistent undo across all files
+set undofile
+if !isdirectory(".vim/undodir")
+    call mkdir(".vim/undodir", "p")
+endif
+set undodir=".vim/undodir"
+
+" imap <ESC>oA <ESC>ki
+" imap <ESC>oB <ESC>ji
+" imap <ESC>oC <ESC>li
+" imap <ESC>oD <ESC>hi
+
+" --> AESTHETICS ---------------------------------------------------------------- {{{1
+" --> Colorscheme ------------------------------- {{{2
+
+" colorscheme heedypo
+" colorscheme rusticated
+colorscheme tender
+:set fillchars+=vert:\
+
+" --> Font -------------------------------------- {{{2
+
+" set guifont=Monaco:h14
+set guifont=Hack:h14
+
+" --> Enable syntax highlighting ---------------- {{{2
+
+syntax on
+
+" --> UI layout --------------------------------- {{{2
+
+set number		                " show line numbers
+set showcmd		                " show command in status bar
+set wildmenu
+set lazyredraw
+set showmatch		              " highlight matching parenthesis
+set fillchars=""              " removes ugly line separators
+set guioptions=               " removes scrollbars in MacVim
+set scrolloff=3               " see next 3 lines when scrolling
+set noerrorbells              " no beeps and whistles
+
+" --> Statusline -------------------------------- {{{2
+function! GitBranch()
+  return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+endfunction
+
+function! StatuslineGit()
+  let l:branchname = GitBranch()
+  return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
+endfunction
+
+set statusline=
+set statusline+=\ %f
+set statusline+=%m
+set statusline+=%=
+set statusline+=\ %y
+set statusline+=\ %{FugitiveStatusline()}
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=
+
+" --> AUTOCOMMANDS ------------------------------------------------------- {{{1
+
+autocmd InsertEnter * :set norelativenumber                     " In insert mode show absolute numbers
+autocmd InsertLeave * :set relativenumber                       " In Normal mode show relative numbers
+augroup vimrc-remember-cursor-position
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+
+autocmd FileType * setlocal formatoptions-=r formatoptions-=o "  Stops vim automatically add comment prefix on next line
+
+"Paste without explicitly turning paste on/off
+function! WrapForTmux(s)
+      if !exists('$TMUX')
+        return a:s
+      endif
+
+  let tmux_start = "\<Esc>Ptmux;"
+  let tmux_end = "\<Esc>\\"
+
+  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+" Automatically reloads the .vimrc file when it is saved
+if has ('autocmd')
+ augroup vimrc
+    autocmd! BufWritePost $MYVIMRC source % | echom "I am fully operational. " . $MYVIMRC | redraw
+    autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "I am fully operational. " . $MYGVIMRC | endif | redraw
+  augroup END
+endif
+
+" Have vim greet you with a message
+autocmd VimEnter * echo 'I was sent by the agency, sir. I was given to understand that you require a valet.'
+
+" Enable auto-complete when a file is opened
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+
+autocmd BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ set softtabstop=4
+    \ set shiftwidth=4
+    \ set textwidth=79
+    \ set expandtab
+    \ set autoindent
+    \ set fileformat=unix
+
+" hledger 
+autocmd FileType hledger setlocal omnifunc=hledger#complete#omnifunc
+
+" --> KEYBINDINGS -------------------------------------------------------- {{{1
+
+let g:mapleader=" "
+let g:maplocalleader="//"
+
+" --> Windows ----------------------------------- {{{2
+
+nnoremap <leader>ws :split<CR>
+nnoremap <leader>wv :vsplit<CR>
+nnoremap <leader>h <C-W>h
+nnoremap <leader>j <C-W>j
+nnoremap <leader>k <C-W>k
+nnoremap <leader>l <C-W>l
+nnoremap <leader>ww <C-W>w
+noremap <leader>+ :resize +20<CR>
+noremap <leader>- :resize -20<CR>
+noremap <leader>< :vertical:resize -20<CR>
+noremap <leader>> :vertical:resize +20<CR>
+nnoremap <leader>= <C-w>=<CR>
+"Swap top/bottom or left/right split
+nnoremap <leader>wr <c-w>R<CR>
+"Break out current window into a new tabview
+nnoremap <leader>wt <c-w>T<CR>
+"Close every window in the current tabview but the current one
+nnoremap <leader>wo <c-w>o<CR>
+
+" --> Buffers ----------------------------------- {{{2
+
+"close current file
+nnoremap <leader>bd :bd<CR>
+"edit file in a new buffer
+nnoremap <leader>be :e file<CR>
+"go to next buffer
+nnoremap <leader>bn :bn<CR>
+"go to previous buffer
+nnoremap <leader>bp :bp<CR>
+"show buffer list
+nnoremap <leader>bl :ls<CR>
+"switch between the two last files
+nnoremap <leader>bb <C-^>
+"close buffer but leave the horizontal split open
+map <leader>bh :bp<bar>sp<bar>bn<bar>bd<CR>
+"close buffer but leave the vertical split open
+map <leader>bv :bp<bar>vsp<bar>bn<bar>bd<CR>
+
+
+" --> Editor ------------------------------------ {{{2
+
+"easier save file
+nnoremap <leader>w :w!<CR>
+"easier save all files
+nnoremap <leader>W :wall<CR>
+"easier quit
+nnoremap <leader>q :q<CR>
+"easier save and quit
+nnoremap <leader>wq :wqa<CR>
+"open .vimrc
+nnoremap <leader>ve :e $MYVIMRC<CR>
+"open hledger 2020.journal
+nnoremap <leader>vf :e ~/pCloud\ Drive/administration/finance/2020.hledger<CR>
+"delete whitespace
+nnoremap <leader>ew :FixWhitespace<CR>
+"automatically closing braces
+inoremap {<CR> {<CR>}<Esc>ko<tab>
+inoremap [<CR> [<CR>]<Esc>ko<tab>
+inoremap (<CR> (<CR>)<Esc>ko<tab>
+
+" --> Help -------------------------------------- {{{2
+"open vim help
+nnoremap <leader>?? :help<CR>
+
+" --> Search ------------------------------------ {{{2
+
+"un-highlights the search term after a search
+noremap <CR> :noh<CR><CR>
+"open the tagbar
+nmap <leader>st :TagbarToggle<CR>
+" Use <Leader>s instead of default <Leader>e:
+nmap <Leader>ss <Plug>(Scalpel)
+
+" --> Files ------------------------------------- {{{2
+
+"open and new file
+nnoremap <leader>fn :enew <CR>
+"invoke CtrlP in find file mode
+nnoremap <leader>ff :CtrlP<CR>
+"invoke CtrlP in MRU mode
+nnoremap <leader>fr :CtrlPMRU<CR>
+"invoke CtrlP in Buffer mode
+nnoremap <leader>fb :CtrlPBuffer<CR>
+"invoke CtrlP on files, buffers and MRU mode
+nnoremap <leader>fm :CtrlPMixed<CR>
+"open Netrw vertically (like Nerdtree)
+nnoremap <leader>fx :Lexplore<CR>
+"show files in current file directory
+nnoremap <leader>fd :files-in-current-directory<CR>
+
+" --> Version Control --------------------------- {{{2
+
+"fugitive: add file
+nnoremap <leader>ga :Gwrite<CR>
+"fugitive: commit file
+nnoremap <leader>gc :Gcommit<CR>
+"fugitive: push file
+nnoremap <leader>gsh :Gpush<CR>
+"fugitive: pull file
+nnoremap <leader>gll :Gpull<CR>
+"fugitive: show git status
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>gd :Gvdiff<CR>
+nnoremap <leader>gr :Gremove<CR>
+"toggle mundo history tree
+nmap <leader>gm :MundoToggle<CR>
+"open History
+nnoremap <leader>gh :History<CR>
+
+" --> Applications ------------------------------ {{{2
+
+"toggle Goyo for focussing on writing
+nnoremap <leader>ag :Goyo<CR>
+"open terminal in vim
+nnoremap <leader>at :belowright terminal<CR>
+
+" --> Orgmode ----------------------------------- {{{2
+
+" --> Format ------------------------------------ {{{2
+
+" invoke Prettier code formatter on current file
+nnoremap <leader>xx :PrettierAsync<CR>
+
+" --> Miscellaneous ----------------------------- {{{2
+
+" Hal9000 sets me right...
+nnoremap <Left> :echoe "Just a moment. Just a moment. I've just picked up a fault in the AE-35 unit. Use 'h'"<CR>
+nnoremap <Right> :echoe "Just what do you think you're doing, Andy? Andy, I really think I'm entitled to an answer to that question. Use 'l'"<CR>
+nnoremap <Up> :echoe "I’m afraid I can’t let you do that Andy. Use 'k'"<CR>
+nnoremap <Down> :echoe "This mission is too important for me to allow you to jeopardize it. Use 'j'"<CR>
+
+" --> Vim-Plug ---------------------------------- {{{2
+
+"invoke Plug to clean plugins
+nnoremap <leader>Pc :PlugClean<CR>
+"invoke Plug to install plugins
+nnoremap <leader>Pi :PlugInstall<CR>
+"invoke Plug to update plugins
+nnoremap <leader>Pu :PlugUpdate<CR>
+"invoke Plug to upgrade plugins
+nnoremap <leader>Pg :PlugUpgrade<CR>
+"invoke Plug to see plugin status
+nnoremap <leader>Ps :PlugStatus<CR>
+
+" --> Languages --------------------------------- {{{2
+" --> Web -------------------------------------- {{{3
+
+" nnoremap <leader>lf :exe ':silent !firefox %'<CR>
+" nnoremap <leader>lc :exe ':silent !chromium-browser %'<CR>
+" nnoremap <leader>lo :exe ':silent !opera %'<CR>
+
+" --> PLUGIN CONFIGURATION ------------------------------------------------------ {{{1
+" --> CtrlP ------------------------------------- {{{2
+
+let g:ctrlp_mruf_exclude = '.*/tmp/.*\|.*/.git/.*'
+let g:ctrlp_max_files = 200000
+let g:ctrlp_mruf_relative = 1
+if executable('ag')
+    let g:ctrlp_user_command = 'ag %s -l --nocolor --ignore=vendor --ignore images --ignore svg --ignore fonts -g ""'
+    let g:ctrlp_use_caching = 0
+else
+    let g:ctrlp_clear_cache_on_exit = 0
+endif
+
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+" set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
+" --> Move-line (Vim-Move) ---------------------- {{{2
+
+let g:move_key_modifier = 'C'
+
+" --> Emmet ------------------------------------- {{{2
+
+let g:user_emmet_leader_key=','
+let g:user_emmet_settings = {'javascript.jsx': {'extends': 'jsx'}}
+autocmd FileType html,css,javascript.jsx,scss EmmetInstall
+
+" --> Tagbar ------------------------------------ {{{2
+
+let g:tagbar_autofocus = 1
+
+" --> Javascript -------------------------------- {{{2
+let g:Javascript_enable_domhtmlcss = 1
+augroup vimrc-javascript
+  autocmd!
+  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+augroup END
+
+" --> Grep -------------------------------------- {{{2
+"
+let Grep_Default_Options = '-IR'
+let Grep_Skip_Files = '*.log *.db'
+let Grep_Skip_Dirs = '.git node_modules'
+
+" --> Vim Vinegar ------------------------------- {{{2
+
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+
+
+" --> Vim-Mundo (version control - history) ----- {{{2
+
+" Enable persistent undo so that undo history persists across vim sessions
+set undofile
+set undodir=~/.vim/undo
+
+" --> ALIAS & ABBREVIATIONS  --------------------------------------------------------------------- {{{1
+
+"abbreviations
+iabbrev adn and
+iabbrev waht what
+iabbrev tehn then
+iabbrev @@ <CR>Andy Dawes<CR>andy.dawes@live.co.uk
+iabbrev ccopy Copyright 2020 Andy Dawes, all rights reserved
+iabbrev sig <CR>Andy Dawes<CR>======================<CR>andy.dawes@live.co.uk<CR>
+
+"hledger abbreviations
+iabbrev htaa <CR>2020-XX-XX Amazon<CR>    expenses:amazon:audible             £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htab <CR>2020-XX-XX Amazon<CR>    expenses:amazon:books               £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htap <CR>2020-XX-XX Amazon<CR>    expenses:amazon:prime               £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htas <CR>2020-XX-XX Amazon<CR>    expenses:amazon:sundries            £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htcash <CR>2020-XX-XX ATM  ?  ???<CR>    expenses:cash                       £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htccm <CR>2020-XX-XX Cave & Mountain Rescue<CR>    expenses:charity                    £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htcdv <CR>2020-XX-XX Domestic Violence UK<CR>    expenses:charity                    £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htcluk <CR>2020-XX-XX Luekaemia UK<CR>    expenses:charity                    £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htcmsf <CR>2020-XX-XX Medecin Sans Frontieres<CR>    expenses:charity                    £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htef <CR>2020-XX-XX ?<CR>    expenses:entertainment:food         £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev hteg <CR>2020-XX-XX ?<CR>    expenses:entertainment:games        £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htep <CR>2020-XX-XX ?<CR>    expenses:entertainment:pub          £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htga <CR>2020-XX-XX Asda<CR>    expenses:groceries             £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htgw <CR>2020-XX-XX Waitrose<CR>    expenses:groceries                  £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htif <CR>2020-XX-XX Co-op Funeral Services<CR>    expenses:insurance:funeral          £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htr <CR>2020-XX-XX Rent<CR>    expenses:rent                       £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htsal <CR>2020-XX-XX Manchester Foundation Trust<CR>    assets:bank:checking                £<CR>    income:salary<CR><ESC>4k
+iabbrev htsub <CR>2020-XX-XX ?<CR>    expenses:subscriptions              £<CR>    assets:bank:checking<CR><ESC>4k
+iabbrev htw <CR>2020-XX-XX Wedding<CR>    expenses:wedding                   £<CR>    assets:bank:checking<CR><ESC>4k
+
+" --> DO NOT DELETE ------------------------------------------------------------- {{{1
+
+" vim: set ft=vim :

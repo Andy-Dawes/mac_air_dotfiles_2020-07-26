@@ -1,0 +1,100 @@
+PS1="\u@\h: \W $ "
+
+# =========================
+# ALIAS
+# =========================
+
+# Opening vim with different vimrcs
+alias vone='vim -u NONE' # Opens vim with no vimrc and no plugins
+alias vorc='vim -u NORC' # Opens vim with no vimrc but with plugins
+alias vorn='vim -u ~/.90vimrc' # OPens vim with a specified vimrc and whatever plugins are defined in that vimrc
+
+# Open applications in tmux
+alias mux="./.tmux/muxa.sh"
+
+# Moving up Directory tree
+alias ..="cd .."
+alias ....="cd ../.."
+alias ......="cd ../../.."
+alias ........="cd ../../../.."
+
+# Commonly used variations of ls (and typos)
+
+alias ls='exa -xG'
+alias ll='exa -lGx'
+alias lh='exa -alGx'
+alias sl='exa -xG'
+
+# This will keep you sane when you're about to smash the keyboard again.
+alias frak="fortune"
+
+# Taskell alias for different Project Boards
+# alias tkl-proposal='taskell .tkl-gst-proposal.md'
+# alias tkl-genesis='taskell .tkl-gst-genesis.md'
+# alias tkl-xmas='taskell .tkl-gst-xmas.md '
+
+# Pomodoro
+alias pom='./Documents/Software/pomodoro'
+
+# Dotdrop
+alias dotdrop='~/dotfiles/dotdrop.sh --cfg=~/dotfiles/config.yaml'
+
+
+# Taskwarrior
+alias t='task'
+alias ta='task add'
+alias td='task delete'
+alias tm='task mod '
+alias tr='task report'
+alias trm='task pro:Money'
+alias ttk='task tag:People.kids'
+alias tth='task tag:People.heather'
+alias tbd='task burndown.daily'
+alias tbw='task burndown.weekly'
+alias tbm='task burndown.monthly'
+alias thm='task history.monthly'
+alias thy='task history.annual'
+
+# Calories
+alias c='./calories'
+alias ca='./calories add'
+alias cw='./calories --w'
+alias cm='./calories --m'
+
+# Hledger
+# Hledger balance
+alias hb='hledger b --real -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hbe='hledger b --real expenses -S --flat -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hbe%='hledger b --real expenses -S --flat -% -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hbw='hledger b --real --weekly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hbm='hledger b --real --monthly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hbq='hledger b --real --quarterly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hby='hledger b -real --yearly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hub='hledger-ui b --real --depth 1 --theme=terminal --watch -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hwb='hledger-web b --real -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+
+# Hledger budgeting
+alias hbum='hledger balance -f ~/pCloud\ Drive/administration/finance/2020.hledger -MB --budget'
+alias hbuq='hledger balance -f ~/pCloud\ Drive/administration/finance/2020.hledger -QB --budget' 
+alias hbuy='hledger balance -f ~/pCloud\ Drive/administration/finance/2020.hledger -YB --budget'
+
+# Hledger incomestatement
+alias hi='hledger is --real -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hiw='hledger is --real --weekly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias him='hledger is --real --monthly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hiq='hledger is --real --quarterly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hiy='hledger is --real --yearly -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+
+# Hledger register
+alias hura='hledger-ui register --real amazon --watch --theme=terminal -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hurc='hledger-ui register --real charity --watch  --theme=terminal -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hurg='hledger-ui register --real groceries --watch --theme=terminal -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hurr='hledger-ui register --real rent --watch --theme=terminal -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+alias hat='hledger accounts --tree --real -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+
+# Hledger stats
+alias hs='hledger stats --real -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+
+# Hledger tags
+alias ht='hledger tags --real -f ~/pCloud\ Drive/administration/finance/2020.hledger'
+
