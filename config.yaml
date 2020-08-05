@@ -66,6 +66,9 @@ dotfiles:
   f_muxa.sh:
     src: tmux/muxa.sh
     dst: ~/.tmux/muxa.sh
+  f_eslintrc:
+    src: eslintrc
+    dst: ~/.eslintrc
 profiles:
   deepthought-air.local:
     dotfiles:
@@ -90,3 +93,4 @@ profiles:
     - f_config.ini
     - f_theme.ini
     - f_muxa.sh
+    - f_eslintrc
